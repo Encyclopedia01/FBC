@@ -89,14 +89,35 @@
   input:focus{border-bottom-color:var(--gold);}
   input::placeholder{color:#9a9d94;}
   .hint{font-size:12px;color:var(--muted);margin-top:4px;margin-bottom:8px;}
+  .dept-picker{position:relative;}
+  .dept-picker::after{content:'⌄';position:absolute;right:3px;top:10px;color:var(--gold-link);font-size:18px;pointer-events:none;}
+  .dept-menu{
+    position:absolute;top:100%;left:0;right:0;z-index:10;display:none;max-height:240px;overflow-y:auto;
+    margin-top:6px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:0 16px 30px -18px rgba(23,28,22,.45);
+  }
+  .dept-menu.open{display:block;animation:fadeSlide .16s ease;}
+  .dept-option{
+    width:100%;padding:10px 12px;border:0;border-radius:2px;background:transparent;color:var(--text);
+    font-family:'Inter',sans-serif;font-size:14px;text-align:left;cursor:pointer;
+  }
+  .dept-option:hover,.dept-option:focus,.dept-option.active{background:#FBF3E3;color:var(--gold-link);outline:none;}
+  .dept-empty{padding:10px 12px;color:var(--muted);font-size:13px;}
 
   .gender-options{display:flex;gap:12px;}
+  .admission-options{display:flex;gap:12px;}
   .gender-btn{
     flex:1;padding:22px 12px;border:1.5px solid var(--line);border-radius:var(--radius);
     background:transparent;color:var(--text);font-size:16px;font-weight:500;cursor:pointer;
     transition:all .15s ease;
   }
   .gender-btn.selected{border-color:var(--gold);background:#FBF3E3;color:var(--gold-link);font-weight:600;}
+  .admission-btn{
+    flex:1;padding:18px 12px;border:1.5px solid var(--line);border-radius:var(--radius);
+    background:transparent;color:var(--text);font-size:16px;font-weight:500;cursor:pointer;
+    transition:all .15s ease;
+  }
+  .admission-btn.selected{border-color:var(--gold);background:#FBF3E3;color:var(--gold-link);font-weight:600;}
 
   .nav-row{display:flex;gap:10px;margin-top:26px;}
   .btn{padding:14px 18px;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;cursor:pointer;border:1.5px solid var(--line);background:transparent;color:var(--text);}
@@ -136,7 +157,9 @@
   .ref-box-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
   .ref-box p{font-size:13px;color:var(--dek);margin:0 0 14px;line-height:1.5;}
   .ref-link-row{display:flex;gap:8px;}
-  .ref-link-row input{flex:1;border:1.5px solid var(--line);border-radius:var(--radius);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);background:var(--bg);}
+  .ref-link-status{flex:1;display:flex;align-items:center;gap:9px;border:1.5px solid var(--line);border-radius:var(--radius);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg);}
+  .ref-link-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 3px rgba(30,158,92,.12);}
+  .ref-link-row input{display:none;}
   .copy-btn{padding:10px 16px;border-radius:var(--radius);border:1.5px solid var(--gold);background:var(--gold);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;white-space:nowrap;}
 
   .redirect-note{margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-align:center;}
@@ -183,38 +206,54 @@
     <section class="screen active" data-step="intro">
       <!-- COPY: eyebrow line above headline -->
       <!-- COPY: main headline (the word inside <em> is the highlighted word) -->
-      <h1>How to Get Admitted Into FUTA With Zero <em>Knowledge.</em></h1>
+      <h1>Everything You Need <br>to Know as a FUTA <em>Aspirant.</em></h1>
       <!-- COPY: subheadline / description paragraph -->
-      <p class="dek"> Learn in one live session with every aspirant in one room, the ropes of what actually gets you past the gate into the school, straight from someone who has lived inside it. <b>This is gonna be larger than the Avengers assembled.</b></p>
+      <p class="dek"> Gettng into FUTA does not have to be hard. There’s an easy way out.</p>
 
       <!-- COPY: the three stat labels below the subheadline -->
       <div class="stat-row">
         <div class="stat"><div class="n" id="seatCount">—</div><div class="l">registered aspirants</div></div>
-        <div class="stat"><div class="n">Live · Google Meet</div><div class="l"></div></div>
+        <div class="stat"><div class="n">Live Webinar</div><div class="l"></div></div>
         <div class="stat"><div class="n">Free</div><div class="l">access</div></div>
       </div>
 
       <div class="ref-banner" id="refBanner"></div>
+
+      <!-- COPY: button text to start the form -->
+      <button class="btn btn-primary" id="startBtn" style="width:100%;padding:16px;border-radius:var(--radius);margin-bottom:30px;">Begin registration →</button>
 
       <div class="leaderboard-box" id="introLeaderboard">
         <!-- COPY: leaderboard heading -->
         <div class="leaderboard-title">🏆 Top inviters right now</div>
         <div id="introLbList"></div>
       </div>
-
-      <!-- COPY: button text to start the form -->
-      <button class="btn btn-primary" id="startBtn" style="width:100%;padding:16px;border-radius:var(--radius);">Begin registration →</button>
     </section>
 
     <!-- ================= STEP: NAME ================= -->
     <section class="screen" data-step="name">
       <div class="step-card">
         <!-- COPY: name question -->
-        <div class="q-label">What should I call you?</div>
+        <div class="q-label">Hi. What should I call you?</div>
         <input type="text" id="nameInput" placeholder="e.g. Encyclopedia">
         <div class="error" id="nameError">Ermmm. Kindly confirm I can call you this.</div>
         <div class="nav-row">
           <button class="btn btn-back" data-back="intro">Back</button>
+          <button class="btn btn-primary" data-next="phone">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STEP: PHONE ================= -->
+    <section class="screen" data-step="phone">
+      <div class="step-card">
+        <!-- COPY: phone question -->
+        <div class="q-label" id="phoneQuestion">Hi. What's your WhatsApp number?</div>
+        <!-- COPY: phone helper text -->
+        <div class="hint">This is the number we'll add to the briefing group.</div>
+        <input type="tel" id="phoneInput" placeholder="e.g. 08012345678">
+        <div class="error" id="phoneError">That number looks incomplete — do you mind checking it.</div>
+        <div class="nav-row">
+          <button class="btn btn-back" data-back="name">Back</button>
           <button class="btn btn-primary" data-next="gender">Continue</button>
         </div>
       </div>
@@ -231,23 +270,7 @@
         </div>
         <div class="error" id="genderError">Please select an option.</div>
         <div class="nav-row">
-          <button class="btn btn-back" data-back="name">Back</button>
-          <button class="btn btn-primary" data-next="phone">Continue</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= STEP: PHONE ================= -->
-    <section class="screen" data-step="phone">
-      <div class="step-card">
-        <!-- COPY: phone question -->
-        <div class="q-label">What's Your WhatsApp number?</div>
-        <!-- COPY: phone helper text -->
-        <div class="hint">This is the number we'll add to the briefing group.</div>
-        <input type="tel" id="phoneInput" placeholder="e.g. 08012345678">
-        <div class="error" id="phoneError">That number looks incomplete — do you mind checking it.</div>
-        <div class="nav-row">
-          <button class="btn btn-back" data-back="gender">Back</button>
+          <button class="btn btn-back" data-back="phone">Back</button>
           <button class="btn btn-primary" data-next="department">Continue</button>
         </div>
       </div>
@@ -257,37 +280,96 @@
     <section class="screen" data-step="department">
       <div class="step-card">
         <!-- COPY: department question -->
-        <div class="q-label">Which department are you aiming for?</div>
+        <div class="q-label">Which department are you aspiring for?</div>
         <!-- COPY: department helper text -->
         <div class="hint">What's your dream Course?</div>
-        <input type="text" id="deptInput" list="deptList" placeholder="Start typing to search…" autocomplete="off">
+        <div class="dept-picker">
+          <input type="text" id="deptInput" placeholder="Start typing to search…" autocomplete="off" aria-haspopup="listbox" aria-expanded="false">
+          <div class="dept-menu" id="deptMenu" role="listbox"></div>
+        </div>
         <datalist id="deptList">
-          <option value="Mechanical Engineering"><option value="Mechatronics Engineering">
-          <option value="Electrical / Electronic Engineering"><option value="Civil Engineering">
-          <option value="Chemical Engineering"><option value="Agricultural & Environmental Engineering">
-          <option value="Metallurgical & Materials Engineering"><option value="Automobile Engineering">
-          <option value="Food Engineering"><option value="Industrial & Production Engineering">
-          <option value="Polymer & Textile Engineering"><option value="Computer Science">
-          <option value="Software Engineering"><option value="Information Technology">
-          <option value="Cyber Security"><option value="Information Systems">
-          <option value="Physics"><option value="Chemistry"><option value="Mathematics">
-          <option value="Microbiology"><option value="Biochemistry"><option value="Industrial Chemistry">
-          <option value="Biology"><option value="Geology"><option value="Applied Geophysics">
-          <option value="Remote Sensing & GIS"><option value="Meteorology">
-          <option value="Marine Science & Technology"><option value="Agricultural Economics & Extension">
-          <option value="Animal Production & Health"><option value="Crop, Soil & Pest Management">
-          <option value="Fisheries & Aquaculture"><option value="Food Science & Technology">
-          <option value="Forestry & Wood Technology"><option value="Home Science & Management">
-          <option value="Architecture"><option value="Building"><option value="Estate Management">
-          <option value="Quantity Surveying"><option value="Surveying & Geoinformatics">
-          <option value="Urban & Regional Planning"><option value="Industrial Design">
-          <option value="Accounting"><option value="Business Administration"><option value="Entrepreneurship">
-          <option value="Information Management Technology"><option value="Project Management Technology">
-          <option value="Transport Management Technology"><option value="Other / not sure yet">
+          <option value="Agricultural Extension & Communication Technology (AEC)">
+          <option value="Agricultural & Resource Economics (ARE)">
+          <option value="Animal Production & Health (APH)">
+          <option value="Crop, Soil & Pest Management (CSP)">
+          <option value="Ecotourism & Wildlife Management (EWM)">
+          <option value="Fisheries & Aquaculture (FAT)">
+          <option value="Food Science & Technology (FST)">
+          <option value="Forestry & Wood Technology (FWT)">
+          <option value="Nutrition & Dietetics (NDT)">
+          <option value="Agricultural Engineering (AGE)">
+          <option value="Civil Engineering (CVE)">
+          <option value="Industrial Production Engineering (IPE)">
+          <option value="Materials & Metallurgical Engineering (MME)">
+          <option value="Mechanical Engineering (MEE)">
+          <option value="Mining Engineering (MNE)">
+          <option value="Anatomy (ANA)">
+          <option value="Biomedical Technology (BDT)">
+          <option value="Medical Laboratory Science (MLS)">
+          <option value="Medicine and Surgery (MED)">
+          <option value="Physiology (PHS)">
+          <option value="Public Health (PBH)">
+          <option value="Animals & Environmental Biology (AEB)">
+          <option value="Biochemistry (BCH)">
+          <option value="Biology (BIO)">
+          <option value="Biotechnology (BTH)">
+          <option value="Microbiology (MCB)">
+          <option value="Plant Biology (PLB)">
+          <option value="Applied Geology (AGY)">
+          <option value="Applied Geophysics (AGP)">
+          <option value="Marine Science & Technology (MST)">
+          <option value="Meteorology (MET)">
+          <option value="Meteorology and Climate Science (MCS)">
+          <option value="Remote Sensing & GIS (RSG)">
+          <option value="Architecture (ARC)">
+          <option value="Building (BLD)">
+          <option value="Estate Management (ESM)">
+          <option value="Industrial Design (IDD)">
+          <option value="Quantity Surveying (QSV)">
+          <option value="Surveying & Geoinformatics (SVG)">
+          <option value="Urban & Regional Planning">
+          <option value="Biomedical Engineering (BME)">
+          <option value="Computer Engineering (CPE)">
+          <option value="Electrical & Electronics Engineering (EEE)">
+          <option value="Information Communication Technology (ICE)">
+          <option value="Mechatronics Engineering (MCE)">
+          <option value="Computer Science (CSC)">
+          <option value="Cybersecurity (CYS)">
+          <option value="Data Science (DSC)">
+          <option value="Information Systems (IFS)">
+          <option value="Information Technology (IFT)">
+          <option value="Software Engineering (SEN)">
+          <option value="Chemistry (CHE)">
+          <option value="General Studies (GNS)">
+          <option value="Mathematics (MTS)">
+          <option value="Physics (PHY)">
+          <option value="Statistics (STA)">
+          <option value="Business Information Technology (BIT)">
+          <option value="Entrepreneurship Management Technology (EMT)">
+          <option value="Logistics & Transport Technology (LTT)">
+          <option value="Project Management Technology (PMT)">
+          <option value="Securities and Investment Management Technology (SIMT)">
         </datalist>
         <div class="error" id="deptError">Please select or type a department.</div>
         <div class="nav-row">
           <button class="btn btn-back" data-back="phone">Back</button>
+          <button class="btn btn-primary" data-next="admission">Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STEP: ADMISSION STATUS ================= -->
+    <section class="screen" data-step="admission">
+      <div class="step-card">
+        <!-- COPY: admission status question -->
+        <div class="q-label">Have you seen "Admission In Progress" on your portal?</div>
+        <div class="admission-options">
+          <button type="button" class="admission-btn" data-value="Yes">Yes</button>
+          <button type="button" class="admission-btn" data-value="No">No</button>
+        </div>
+        <div class="error" id="admissionError">Please select an option.</div>
+        <div class="nav-row">
+          <button class="btn btn-back" data-back="department">Back</button>
           <button class="btn btn-primary" data-next="review">Continue</button>
         </div>
       </div>
@@ -303,16 +385,20 @@
           <button class="review-edit" data-back="name">Edit</button>
         </div>
         <div class="review-row">
-          <div><div class="l">Gender</div><div class="v" id="rvGender"></div></div>
-          <button class="review-edit" data-back="gender">Edit</button>
-        </div>
-        <div class="review-row">
           <div><div class="l">WhatsApp</div><div class="v" id="rvPhone"></div></div>
           <button class="review-edit" data-back="phone">Edit</button>
         </div>
         <div class="review-row">
+          <div><div class="l">Gender</div><div class="v" id="rvGender"></div></div>
+          <button class="review-edit" data-back="gender">Edit</button>
+        </div>
+        <div class="review-row">
           <div><div class="l">Department</div><div class="v" id="rvDept"></div></div>
           <button class="review-edit" data-back="department">Edit</button>
+        </div>
+        <div class="review-row">
+          <div><div class="l">Admission In Progress</div><div class="v" id="rvAdmission"></div></div>
+          <button class="review-edit" data-back="admission">Edit</button>
         </div>
         <!-- COPY: fine print above submit button -->
         <p class="hint" style="margin-top:16px;">Upon confirming, you'll be redirected to WhatsApp with a pre-filled message so you can access the main group.</p>
@@ -330,7 +416,7 @@
         <!-- COPY: success headline -->
         <h2>Congratulations. You're in. 🎉</h2>
         <!-- COPY: success subtext -->
-        <p>Here's your access pass — see you at the briefing.</p>
+        <p>Here's your access pass — see you at the conference.</p>
       </div>
 
       <div class="card">
@@ -349,10 +435,11 @@
       <div class="ref-box">
         <div class="ref-box-title">Your personal referral link</div>
         <!-- COPY: referral encouragement text -->
-        <p>Did you know you can receive a FREE scholarship worth ₦5,000 by Sharing your referral link with friends also planning for FUTA? Everyone you refer puts your name higher on the leaderboard which also increases your chance of winning the Scholarship.</p>
+        <p>Did you know you can receive a FREE scholarship worth ₦5,000 by Sharing your referral link with friends also aspiring for FUTA? Everyone you refer puts your name higher on the leaderboard which also increases your chance of winning the Scholarship.</p>
         <div class="ref-link-row">
-          <input type="text" id="refLinkOutput" readonly>
-          <button class="copy-btn" id="copyRefBtn">Copy</button>
+          <div class="ref-link-status">Personal invite link ready</div>
+          <input type="hidden" id="refLinkOutput" readonly>
+          <button class="copy-btn" id="shareRefBtn">Share on WhatsApp</button>
         </div>
       </div>
 
@@ -393,7 +480,7 @@
         <button class="btn-sm" id="refreshList">Refresh</button>
         <button class="btn-sm" id="closeModal">Close</button>
       </div>
-      <table id="regTable"><thead><tr><th>Name</th><th>Gender</th><th>Phone</th><th>Department</th><th>Code</th><th>Referred by</th><th>Time</th></tr></thead><tbody></tbody></table>
+      <table id="regTable"><thead><tr><th>Name</th><th>Phone</th><th>Gender</th><th>Department</th><th>Admission In Progress</th><th>Code</th><th>Referred by</th><th>Time</th></tr></thead><tbody></tbody></table>
       <textarea id="csvOut" readonly placeholder="Copied CSV will also appear here for manual copy."></textarea>
     </div>
   </div>
@@ -404,12 +491,16 @@
 const WHATSAPP_NUMBER = "2348087734676"; // your WhatsApp number, international format
 const EVENT_NAME = "The FUTA Admission Briefing";
 const ADMIN_PIN = "2027"; // change this to whatever PIN you want for the registrar view
+const PUBLIC_REGISTRATION_BASELINE = 210;
+// Deploy student_submission_backend/apps_script_code.gs as an Apps Script web app,
+// then paste its /exec URL here before redeploying this page on Vercel.
+const SHARED_STORAGE_URL = "REPLACE_WITH_APPS_SCRIPT_WEB_APP_URL";
 // ================================================
 
-const STEPS = ['intro','name','gender','phone','department','review','success'];
-const FORM_STEPS = ['name','gender','phone','department','review'];
+const STEPS = ['intro','name','phone','gender','department','admission','review','success'];
+const FORM_STEPS = ['name','phone','gender','department','admission','review'];
 let currentStep = 'intro';
-const formData = { name:'', gender:'', phone:'', department:'' };
+const formData = { name:'', phone:'', gender:'', department:'', admission:'' };
 let incomingRef = new URLSearchParams(window.location.search).get('ref') || '';
 
 const storage = (window.storage && typeof window.storage.get === 'function' && typeof window.storage.set === 'function')
@@ -455,13 +546,84 @@ document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => showStep(btn.dataset.back));
 });
 
+// department autocomplete
+const deptInput = document.getElementById('deptInput');
+const deptMenu = document.getElementById('deptMenu');
+const deptOptions = Array.from(document.querySelectorAll('#deptList option')).map(option => option.value);
+let activeDeptIndex = -1;
+
+function closeDeptMenu(){
+  deptMenu.classList.remove('open');
+  deptInput.setAttribute('aria-expanded', 'false');
+  activeDeptIndex = -1;
+}
+
+function renderDeptMenu(){
+  const query = deptInput.value.trim().toLowerCase();
+  const matches = deptOptions.filter(option => option.toLowerCase().includes(query));
+  deptMenu.innerHTML = matches.length
+    ? matches.map((option, index) => `<button type="button" class="dept-option" role="option" data-index="${index}">${escapeHtml(option)}</button>`).join('')
+    : '<div class="dept-empty">No matching department found.</div>';
+  deptMenu.classList.add('open');
+  deptInput.setAttribute('aria-expanded', 'true');
+  activeDeptIndex = -1;
+}
+
+function chooseDept(option){
+  deptInput.value = option;
+  closeDeptMenu();
+}
+
+deptInput.addEventListener('focus', renderDeptMenu);
+deptInput.addEventListener('input', renderDeptMenu);
+deptInput.addEventListener('keydown', event => {
+  const options = Array.from(deptMenu.querySelectorAll('.dept-option'));
+  if(event.key === 'ArrowDown' && options.length){
+    event.preventDefault();
+    activeDeptIndex = Math.min(activeDeptIndex + 1, options.length - 1);
+  }else if(event.key === 'ArrowUp' && options.length){
+    event.preventDefault();
+    activeDeptIndex = Math.max(activeDeptIndex - 1, 0);
+  }else if(event.key === 'Enter' && activeDeptIndex >= 0){
+    event.preventDefault();
+    chooseDept(options[activeDeptIndex].textContent);
+    return;
+  }else if(event.key === 'Escape'){
+    closeDeptMenu();
+    return;
+  }else{
+    return;
+  }
+  options.forEach((option, index) => option.classList.toggle('active', index === activeDeptIndex));
+});
+
+deptMenu.addEventListener('click', event => {
+  const option = event.target.closest('.dept-option');
+  if(option) chooseDept(option.textContent);
+});
+
+document.addEventListener('click', event => {
+  if(!event.target.closest('.dept-picker')) closeDeptMenu();
+});
+
 // name step
-document.querySelector('[data-next="gender"]').addEventListener('click', () => {
+document.querySelector('[data-next="phone"]').addEventListener('click', () => {
   const v = document.getElementById('nameInput').value.trim();
   const err = document.getElementById('nameError');
   if(!v){ err.style.display='block'; return; }
   err.style.display='none';
   formData.name = v;
+  document.getElementById('phoneQuestion').textContent = `Hi ${v}. What's your WhatsApp number?`;
+  showStep('phone');
+});
+
+// phone step
+document.querySelector('[data-next="gender"]').addEventListener('click', () => {
+  const v = document.getElementById('phoneInput').value.trim();
+  const err = document.getElementById('phoneError');
+  if(v.replace(/\D/g,'').length < 10){ err.style.display='block'; return; }
+  err.style.display='none';
+  formData.phone = v;
   showStep('gender');
 });
 
@@ -474,39 +636,86 @@ document.querySelectorAll('.gender-btn').forEach(btn => {
     document.getElementById('genderError').style.display = 'none';
   });
 });
-document.querySelector('[data-next="phone"]').addEventListener('click', () => {
+document.querySelector('[data-next="department"]').addEventListener('click', () => {
   const err = document.getElementById('genderError');
   if(!formData.gender){ err.style.display='block'; return; }
   err.style.display='none';
-  showStep('phone');
-});
-
-// phone step
-document.querySelector('[data-next="department"]').addEventListener('click', () => {
-  const v = document.getElementById('phoneInput').value.trim();
-  const err = document.getElementById('phoneError');
-  if(v.replace(/\D/g,'').length < 10){ err.style.display='block'; return; }
-  err.style.display='none';
-  formData.phone = v;
   showStep('department');
 });
 
 // department step
-document.querySelector('[data-next="review"]').addEventListener('click', () => {
+document.querySelector('[data-next="admission"]').addEventListener('click', () => {
   const v = document.getElementById('deptInput').value.trim();
   const err = document.getElementById('deptError');
   if(!v){ err.style.display='block'; return; }
   err.style.display='none';
   formData.department = v;
+  showStep('admission');
+});
+
+// admission status step
+document.querySelectorAll('.admission-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.admission-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    formData.admission = btn.dataset.value;
+    document.getElementById('admissionError').style.display = 'none';
+  });
+});
+document.querySelector('[data-next="review"]').addEventListener('click', () => {
+  const err = document.getElementById('admissionError');
+  if(!formData.admission){ err.style.display='block'; return; }
+  err.style.display='none';
   document.getElementById('rvName').textContent = formData.name;
-  document.getElementById('rvGender').textContent = formData.gender;
   document.getElementById('rvPhone').textContent = formData.phone;
+  document.getElementById('rvGender').textContent = formData.gender;
   document.getElementById('rvDept').textContent = formData.department;
+  document.getElementById('rvAdmission').textContent = formData.admission;
   showStep('review');
 });
 
 // ---------- storage helpers ----------
 async function getAllEntries(){
+  if(SHARED_STORAGE_URL !== 'REPLACE_WITH_APPS_SCRIPT_WEB_APP_URL'){
+    try{
+      const callbackName = 'fbcEntries_' + Date.now();
+      const entries = await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        const timeout = setTimeout(() => {
+          cleanup();
+          reject(new Error('Shared registration request timed out'));
+        }, 10000);
+        function cleanup(){
+          clearTimeout(timeout);
+          delete window[callbackName];
+          script.remove();
+        }
+        window[callbackName] = payload => {
+          cleanup();
+          if(payload && payload.status === 'ok') resolve(payload.submissions || []);
+          else reject(new Error('Shared registration request failed'));
+        };
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Could not reach shared registration storage'));
+        };
+        script.src = `${SHARED_STORAGE_URL}?callback=${callbackName}`;
+        document.head.appendChild(script);
+      });
+      return entries.map(entry => ({
+        ...entry,
+        gender: entry.gender || '',
+        phone: entry.phone || '',
+        department: entry.department || '',
+        admission: entry.admission || '',
+        referredBy: entry.referredBy || '',
+        ts: entry.ts || entry.submitted_at || ''
+      }));
+    }catch(err){
+      console.error('Shared storage read error', err);
+    }
+  }
+
   const entries = [];
   try{
     const res = await storage.list('reg:', true);
@@ -546,7 +755,7 @@ function escapeHtml(s){
 // ---------- initial load: seat count, leaderboard, referral banner ----------
 (async function init(){
   const entries = await getAllEntries();
-  document.getElementById('seatCount').textContent = entries.length;
+  document.getElementById('seatCount').textContent = PUBLIC_REGISTRATION_BASELINE + entries.length;
 
   const topRows = buildLeaderboard(entries, 5);
   renderLeaderboardInto(document.getElementById('introLbList'), topRows);
@@ -568,22 +777,40 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
   btn.textContent = 'Issuing clearance…';
 
   const freshEntries = await getAllEntries();
-  const code = 'FUTA' + String(freshEntries.length + 1).padStart(4,'0');
+  const code = 'FUTA' + String(PUBLIC_REGISTRATION_BASELINE + freshEntries.length + 1).padStart(4,'0');
 
   const entry = {
     name: formData.name,
     gender: formData.gender,
     phone: formData.phone,
     department: formData.department,
+    admission: formData.admission,
     code: code,
     referredBy: incomingRef || '',
     ts: new Date().toISOString()
   };
   const key = 'reg:' + Date.now() + '-' + Math.random().toString(36).slice(2,7);
 
-  try{
-    await storage.set(key, JSON.stringify(entry), true);
-  }catch(err){ console.error('Storage error', err); }
+  if(SHARED_STORAGE_URL !== 'REPLACE_WITH_APPS_SCRIPT_WEB_APP_URL'){
+    const submitted = navigator.sendBeacon(
+      SHARED_STORAGE_URL,
+      new URLSearchParams({
+        name: entry.name,
+        gender: entry.gender,
+        phone: entry.phone,
+        department: entry.department,
+        admission: entry.admission,
+        code: entry.code,
+        referredBy: entry.referredBy,
+        ts: entry.ts
+      })
+    );
+    if(!submitted) console.error('Shared storage submission was not queued');
+  }else{
+    try{
+      await storage.set(key, JSON.stringify(entry), true);
+    }catch(err){ console.error('Storage error', err); }
+  }
 
   // populate access pass
   document.getElementById('cardName').textContent = entry.name;
@@ -596,10 +823,12 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
 
   // refresh leaderboard including this new entry
   const allEntries = freshEntries.concat([entry]);
+  document.getElementById('seatCount').textContent = PUBLIC_REGISTRATION_BASELINE + allEntries.length;
   renderLeaderboardInto(document.getElementById('successLbList'), buildLeaderboard(allEntries, 5));
 
   // COPY: WhatsApp message template — edit the text inside the backticks below
-  const message = `Hi Encyclopedia! I just registered for ${EVENT_NAME}.\n\nName: ${entry.name}\nDepartment: ${entry.department}\n\nPlease add me to the briefing group.`;
+  const identity = entry.admission === 'Yes' ? `I am ${entry.name}` : `My name is ${entry.name}`;
+  const message = `Hi Encyclopedia. I just registered for the FUTA Briefing Conference. ${identity} and I am aspiring for ${entry.department}.`;
   const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   document.getElementById('manualLink').href = waLink;
 
@@ -607,15 +836,10 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
   setTimeout(() => { window.open(waLink, '_blank'); }, 900);
 });
 
-document.getElementById('copyRefBtn').addEventListener('click', async () => {
-  const input = document.getElementById('refLinkOutput');
-  input.select();
-  try{
-    await navigator.clipboard.writeText(input.value);
-    const btn = document.getElementById('copyRefBtn');
-    btn.textContent = 'Copied ✓';
-    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
-  }catch(e){}
+document.getElementById('shareRefBtn').addEventListener('click', () => {
+  const referralMessage = `Hi! I just registered for the FUTA Briefing Conference by The Encyclopedia. It is a briefing session for FUTA aspirants with useful admission guidance and updates. You can register here using my referral link: ${document.getElementById('refLinkOutput').value}`;
+  const shareLink = `https://wa.me/?text=${encodeURIComponent(referralMessage)}`;
+  window.open(shareLink, '_blank');
 });
 
 document.getElementById('manualLink').addEventListener('click', (e) => e.preventDefault());
@@ -646,27 +870,28 @@ document.getElementById('pinSubmit').addEventListener('click', async () => {
 
 async function renderAdminList(){
   const tbody = document.querySelector('#regTable tbody');
-  tbody.innerHTML = '<tr><td colspan="7">Loading…</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8">Loading…</td></tr>';
   const entries = await getAllEntries();
   entries.sort((a,b) => new Date(a.ts) - new Date(b.ts));
   document.getElementById('listCount').textContent = entries.length;
   tbody.innerHTML = entries.map(en => `<tr>
       <td>${escapeHtml(en.name)}</td>
-      <td>${escapeHtml(en.gender||'')}</td>
       <td>${escapeHtml(en.phone)}</td>
+      <td>${escapeHtml(en.gender||'')}</td>
       <td>${escapeHtml(en.department)}</td>
+      <td>${escapeHtml(en.admission||'')}</td>
       <td>${escapeHtml(en.code||'')}</td>
       <td>${escapeHtml(en.referredBy||'—')}</td>
       <td>${new Date(en.ts).toLocaleString()}</td>
-    </tr>`).join('') || '<tr><td colspan="7">No registrations yet.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="8">No registrations yet.</td></tr>';
   window._csvEntries = entries;
 }
 document.getElementById('refreshList').addEventListener('click', renderAdminList);
 
 document.getElementById('copyCsv').addEventListener('click', async () => {
   const entries = window._csvEntries || [];
-  const rows = [['Name','Gender','Phone','Department','Code','Referred by','Time'].join(',')]
-    .concat(entries.map(en => [en.name, en.gender, en.phone, en.department, en.code, en.referredBy, en.ts]
+  const rows = [['Name','Phone','Gender','Department','Admission In Progress','Code','Referred by','Time'].join(',')]
+    .concat(entries.map(en => [en.name, en.phone, en.gender, en.department, en.admission, en.code, en.referredBy, en.ts]
       .map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')));
   const csv = rows.join('\n');
   const out = document.getElementById('csvOut');
